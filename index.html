@@ -78,10 +78,6 @@ body{
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px 90px}
 
 /* ---------- Fosforlu kalem vurgusu ---------- */
-.mark-hl{
-  background:linear-gradient(180deg,transparent 52%,var(--marker) 52%,var(--marker) 92%,transparent 92%);
-  color:var(--marker-fg);
-}
 
 /* ============================================================
    ÜST BAR — kitabın "sayfa başlığı" (running head)
@@ -332,7 +328,6 @@ nav.tabs button.active{color:var(--marker-fg);background-size:100% 100%}
 .tfRow{display:grid;gap:9px}
 .tfItem{border:1px solid var(--rule);border-radius:7px;padding:13px 14px;background:var(--sheet)}
 .tfQ{font-size:15px;margin-bottom:9px;font-family:var(--serif)}
-.tfBtns{display:flex;gap:7px}
 
 /* ============================================================
    SINAV
@@ -680,6 +675,78 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
   .goalChip{padding:4px 7px 4px 5px}
 }
 
+
+/* ---------- Fiil kartı: kontrol düğmesi ve sonuç ---------- */
+.vCheckBtn{width:100%;margin-top:12px}
+.vResult{
+  margin-top:12px;padding:9px 12px;border-radius:6px;font-size:13.5px;
+  border-left:3px solid;display:flex;flex-wrap:wrap;gap:6px;align-items:baseline
+}
+.vResult span{font-family:var(--serif);opacity:.9}
+.vResult.all {background:var(--green-soft);color:var(--green);border-color:var(--green)}
+.vResult.some{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
+.vResult.none{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.vBottomBar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  flex-wrap:wrap;margin-top:16px
+}
+.vBottomBar .mono{font-size:12.5px}
+.inp[readonly]{opacity:.95;cursor:default}
+
+/* iOS Safari, 16px'ten küçük yazıda odaklanınca sayfayı yakınlaştırır.
+   Mobilde tüm giriş alanlarını 16px yapıp bunu engelliyoruz. */
+@media(max-width:880px){
+  .inp,.writeBox,input,textarea{font-size:16px}
+  .vgrid{grid-template-columns:1fr;gap:10px}
+  .vBottomBar{flex-direction:column;align-items:stretch}
+  .vBottomBar .row{justify-content:stretch}
+  .vBottomBar .row .btn{flex:1}
+}
+
+
+/* ---------- Başlık yüksekliğine bağlı yapışkan ofsetler ---------- */
+:root{ --hdr:104px }
+html{ scroll-padding-top:calc(var(--hdr) + 12px) }
+.gramNav{ top:calc(var(--hdr) + 14px) }
+.examBar{ top:calc(var(--hdr) + 8px) }
+.studioSide{ top:calc(var(--hdr) + 14px); max-height:calc(100vh - var(--hdr) - 32px) }
+
+/* Yan panel ekranı taşmasın; içeriği uzunsa kendi içinde kaydırılır.
+   Yükseklik, başlığın gerçek yüksekliğine göre hesaplanır. */
+@media(min-width:881px){
+  .studioSide{ align-self:start }
+  .studioMain{ min-height:calc(100vh - var(--hdr) - 220px) }
+}
+
+/* ---------- İnce kaydırma çubukları ---------- */
+.studioSide,.studioMain,.modeBar,nav.tabs,.tblWrap,.modalCard{ scrollbar-width:thin;
+  scrollbar-color:var(--rule-2) transparent }
+.studioSide::-webkit-scrollbar,.studioMain::-webkit-scrollbar,.tblWrap::-webkit-scrollbar{ width:8px;height:8px }
+.studioSide::-webkit-scrollbar-thumb,.studioMain::-webkit-scrollbar-thumb,.tblWrap::-webkit-scrollbar-thumb{
+  background:var(--rule-2);border-radius:99px }
+.studioSide::-webkit-scrollbar-track,.studioMain::-webkit-scrollbar-track,.tblWrap::-webkit-scrollbar-track{
+  background:transparent }
+
+/* ---------- Altbilgi ---------- */
+.siteFoot{
+  margin-top:56px;padding:22px 0 6px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap
+}
+.footBrand b{font-family:var(--serif);font-size:16px}
+.footBrand span{color:var(--ink-soft);font-size:13px}
+.footDev{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--ink-soft)
+}
+.footDev a{
+  color:var(--pen);text-decoration:none;font-weight:700;
+  border-bottom:1px solid transparent;transition:.15s;margin-left:6px
+}
+.footDev a:hover{border-bottom-color:var(--pen)}
+@media(max-width:600px){
+  .siteFoot{flex-direction:column;align-items:flex-start;gap:10px;text-align:left}
+}
+
 </style>
 </head>
 <body>
@@ -713,7 +780,7 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ KELİMELER ============================ -->
 <section class="page active" id="page-words">
   <div class="hero">
-    <div class="eyebrow">Vocabulary</div>
+    <div class="eyebrow">Kelime Çalışması</div>
     <h1>Vocabulary</h1>
     <p>Bir kategori ve çalışma modu seç. Kelimeleri kartlarla öğren, oyunlarla pekiştir.</p>
   </div>
@@ -750,9 +817,9 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ FİİLLER ============================ -->
 <section class="page" id="page-verbs">
   <div class="hero">
-    <div class="eyebrow">Irregular Verbs</div>
+    <div class="eyebrow">Düzensiz Fiiller</div>
     <h1>Irregular Verbs</h1>
-    <p>Türkçe anlamına bakarak V1 / V2 / V3 hâllerini yaz. <b>Enter</b> ile bir sonraki kutuya geç, bilmediğini boş bırak.</p>
+    <p>Türkçe anlamına bakarak V1 / V2 / V3 hâllerini yaz. <b>Enter</b> ile bir sonraki kutuya geç, her fiili kendi düğmesiyle tek tek kontrol et.</p>
   </div>
 
   <div class="toolbar">
@@ -762,10 +829,6 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
       <button class="chip" data-vmode="match">Matching</button>
       <button class="chip" data-vmode="speed">Speed Round</button>
       <button class="chip" data-vmode="list">Full List</button>
-    </div>
-    <div class="row">
-      <button class="btn ghost sm" id="verbNew">Yeni Set</button>
-      <button class="btn sm" id="verbCheck">Kontrol Et</button>
     </div>
   </div>
 
@@ -782,7 +845,7 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ GRAMER ============================ -->
 <section class="page" id="page-grammar">
   <div class="hero">
-    <div class="eyebrow">Grammar</div>
+    <div class="eyebrow">Gramer Rehberi</div>
     <h1>Grammar Guide</h1>
     <p>9 temel konu: kısa anlatım kartları + her konunun sonunda etkileşimli test.</p>
   </div>
@@ -795,7 +858,7 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ OKUMA ============================ -->
 <section class="page" id="page-reading">
   <div class="hero">
-    <div class="eyebrow">Reading</div>
+    <div class="eyebrow">Okuma Parçaları</div>
     <h1>Reading</h1>
     <p>A1 seviyesinde sekiz kısa metin. Altı çizili kelimelere dokunarak Türkçesini gör, metni dinle, sonunda anlama sorularını çöz.</p>
   </div>
@@ -805,7 +868,7 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ SINAV ============================ -->
 <section class="page" id="page-exam">
   <div class="hero">
-    <div class="eyebrow">Exams</div>
+    <div class="eyebrow">Sınavlar</div>
     <h1>Exams</h1>
     <p>Süreli, karışık sorulu gerçek sınav düzeni. Soruları işaretleyip sonra dönebilir, bitirince her sorunun doğrusunu ve açıklamasını inceleyebilirsin.</p>
   </div>
@@ -815,7 +878,7 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ YAZMA ============================ -->
 <section class="page" id="page-writing">
   <div class="hero">
-    <div class="eyebrow">Writing</div>
+    <div class="eyebrow">Yazma &amp; Günlük</div>
     <h1>Writing &amp; Diary</h1>
     <p>Her gün bir konu, hazır cümle başlangıçları ve kelime bankası. Kısa da olsa her gün yaz — yazdıkların burada birikir.</p>
   </div>
@@ -825,12 +888,23 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 <!-- ============================ İSTATİSTİK ============================ -->
 <section class="page" id="page-stats">
   <div class="hero">
-    <div class="eyebrow">Progress</div>
+    <div class="eyebrow">İlerleme Durumun</div>
     <h1>My Progress</h1>
     <p>Çalışmaların tarayıcında kayıtlı tutulur; sayfayı kapatsan da kaybolmaz.</p>
   </div>
   <div id="statsArea"></div>
 </section>
+
+
+<footer class="siteFoot">
+  <div class="footBrand">
+    <b>EnglishLab</b> <span>A1 seviyesi İngilizce öğrenme ve pratik platformu</span>
+  </div>
+  <div class="footDev">
+    Geliştirici
+    <a href="https://mervanoktan.com.tr" target="_blank" rel="noopener noreferrer">Mervan Oktan</a>
+  </div>
+</footer>
 
 </div>
 
@@ -838,6 +912,11 @@ nav.tabs button{flex:none;scroll-snap-align:start;padding:9px 12px 10px;font-siz
 
 <script>
 "use strict";
+
+/* Aşağıdaki üç görünüm işlevi, özellikler eklendikçe birden fazla kez
+   yeniden tanımlanıyor. Katı kipte bildirilmemiş bir değişkene atama
+   yapılamayacağı için önce burada bildiriliyorlar. */
+let buildChips, renderFlash, renderSynAnt;
 /* ==================================================================
    1) VERİ KATMANI  — buradan kolayca genişletebilirsin
    ================================================================== */
@@ -1508,16 +1587,6 @@ const W = { cat:CATEGORIES[0].id, mode:"flash", i:0, flipped:false, queue:[], do
 
 function curWords(){ return CATEGORIES.find(c=> c.id === W.cat).words; }
 
-function buildChips(){
-  $("#catChips").innerHTML = CATEGORIES.map(c=>
-    `<button class="chip ${c.id===W.cat?"active":""}" data-cat="${c.id}">${c.icon} ${esc(c.name)}</button>`).join("");
-  $("#modeChips").innerHTML = MODES.map(m=>
-    `<button class="chip ${m.id===W.mode?"active":""}" data-mode="${m.id}">${esc(m.name)}</button>`).join("");
-
-  $$("#catChips .chip").forEach(b=> b.onclick = ()=>{ W.cat = b.dataset.cat; resetWordMode(); });
-  $$("#modeChips .chip").forEach(b=> b.onclick = ()=>{ W.mode = b.dataset.mode; resetWordMode(); });
-}
-
 function resetWordMode(){
   W.i=0; W.done=0; W.right=0; W.flipped=false; W.answered=false;
   W.queue = shuffle(curWords());
@@ -1541,56 +1610,6 @@ function renderWords(){
 }
 
 /* ---------- 1a) Kelime Kartları ---------- */
-function renderFlash(area){
-  const list = curWords();
-  const w = list[W.i];
-  const learned = store.learned.has(w.en);
-  setWordProgress(W.i+1, list.length);
-
-  area.innerHTML = `
-  <div class="flashWrap">
-    <div class="flash ${W.flipped?"flip":""}" id="flashCard">
-      <div class="in">
-        <div class="f">
-          <button class="speakBtn" id="spk" title="Sesli oku">🔊</button>
-          <button class="starBtn ${learned?"on":""}" id="star" title="Öğrendim olarak işaretle">${learned?"⭐":"☆"}</button>
-          <div class="emoji">${w.e}</div>
-          <div class="wordEn">${esc(w.en)}</div>
-          <div class="sentence muted">${esc(w.s)}</div>
-          <div class="hintTxt">Çevirmek için tıkla · Boşluk tuşu</div>
-        </div>
-        <div class="b">
-          <div class="emoji">${w.e}</div>
-          <div class="wordTr">${esc(w.tr)}</div>
-          <div class="sentence">${esc(w.st)}</div>
-          <div class="hintTxt">← → tuşlarıyla gezinebilirsin</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row" style="justify-content:center;margin-top:18px">
-    <button class="btn ghost" id="prev">← Önceki</button>
-    <button class="btn ghost" id="flip">🔄 Çevir</button>
-    <button class="btn" id="next">Sonraki →</button>
-  </div>
-  <p class="center muted" style="margin-top:12px;font-size:13px">
-    Öğrendiğin kelimeleri ⭐ ile işaretle — İlerleme sekmesinde takip edilir.
-  </p>`;
-
-  $("#flashCard").onclick = e=>{
-    if(e.target.closest("#spk") || e.target.closest("#star")) return;
-    W.flipped = !W.flipped; $("#flashCard").classList.toggle("flip");
-  };
-  $("#spk").onclick = ()=> speak(w.en);
-  $("#star").onclick = ()=>{
-    if(store.learned.has(w.en)){ store.learned.delete(w.en); toast("İşaret kaldırıldı"); }
-    else { store.learned.add(w.en); toast("⭐ Öğrenildi: " + w.en, "good"); }
-    save(); renderFlash(area);
-  };
-  $("#flip").onclick  = ()=>{ W.flipped=!W.flipped; $("#flashCard").classList.toggle("flip"); };
-  $("#next").onclick  = ()=> moveFlash(1);
-  $("#prev").onclick  = ()=> moveFlash(-1);
-}
 function moveFlash(d){
   const n = curWords().length;
   W.i = (W.i + d + n) % n;
@@ -1843,112 +1862,36 @@ document.addEventListener("keydown", e=>{
    ================================================================== */
 const V = { mode:"test", set:[], checked:false };
 
-function newVerbSet(){ V.set = sample(VERBS, 8); V.checked = false; renderVerbs(); }
-
+/* Zincirin tabanı: yalnızca "Full List" görünümünü üretir.
+   Diğer modlar (yazma, test, eşleştirme, hız turu) üstteki
+   sarmalayıcılar tarafından karşılanır. */
 function renderVerbs(){
+  if(V.mode !== "list") return;
   const area = $("#verbArea");
-  const total = VERBS.length, learned = store.verbOk.size;
-  $("#verbBar").style.width = (learned/total*100) + "%";
-  $("#verbProg").textContent = learned + " / " + total + " fiil öğrenildi";
-
-  $("#verbCheck").style.display = V.mode === "test" ? "" : "none";
-  $("#verbNew").style.display   = V.mode === "test" ? "" : "none";
-
-  if(V.mode === "list"){
-    area.innerHTML = `
-    <div class="card pad">
-      <div class="tblWrap">
-        <table class="verbList">
-          <thead><tr><th></th><th>Türkçe</th><th>V1 (yalın)</th><th>V2 (past)</th><th>V3 (participle)</th><th></th></tr></thead>
-          <tbody>
-            ${VERBS.map((v,i)=>`<tr>
-              <td style="font-size:20px">${v.e}</td>
-              <td><b>${esc(v.tr)}</b></td>
-              <td>${esc(v.v1)}</td><td>${esc(v.v2)}</td><td>${esc(v.v3)}</td>
-              <td><button class="btn ghost sm" data-spk="${i}">🔊</button></td>
-            </tr>`).join("")}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
-    $$("[data-spk]").forEach(b=> b.onclick = ()=>{
-      const v = VERBS[+b.dataset.spk];
-      speak(v.v1 + ", " + v.v2.replace("/", " or ") + ", " + v.v3);
-    });
-    return;
-  }
-
-  if(!V.set.length) V.set = sample(VERBS, 8);
-
+  verbProgress();
   area.innerHTML = `
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:13px">
-    ${V.set.map((v,i)=>`
-      <div class="verbCard">
-        <div class="verbHead">
-          <div class="e">${v.e}</div>
-          <div style="flex:1"><b>${esc(v.tr)}</b><span>Bu fiilin üç hâlini yaz</span></div>
-          <button class="btn ghost sm" data-vspk="${i}" title="Doğru cevabı dinle">🔊</button>
-        </div>
-        <div class="vgrid">
-          ${["v1","v2","v3"].map((k,j)=>`
-            <div class="vfield">
-              <label>${k.toUpperCase()} ${["(yalın)","(past)","(participle)"][j]}</label>
-              <input class="inp" data-v="${i}" data-k="${k}" data-idx="${i*3+j}" autocomplete="off" spellcheck="false">
-            </div>`).join("")}
-        </div>
-      </div>`).join("")}
-  </div>
-  <p class="center muted" style="margin-top:16px;font-size:13px">
-    <b>Enter</b> → sıradaki kutu · Bilmediklerini boş bırakabilirsin · Kontrol ettikten sonra doğru cevaplar yeşil olur.
-  </p>`;
-
-  const inputs = $$("#verbArea input");
-  inputs.forEach(inp=> inp.onkeydown = e=>{
-    if(e.key !== "Enter") return;
-    e.preventDefault();
-    const nx = inputs[+inp.dataset.idx + 1];
-    if(nx){ nx.focus(); nx.select(); } else { checkVerbs(); }
-  });
-  $$("[data-vspk]").forEach(b=> b.onclick = ()=>{
-    const v = V.set[+b.dataset.vspk];
+  <div class="card pad">
+    <div class="tblWrap">
+      <table class="verbList">
+        <thead><tr><th></th><th>Türkçe</th><th>V1 (yalın)</th><th>V2 (past)</th><th>V3 (participle)</th><th></th></tr></thead>
+        <tbody>
+          ${VERBS.map((v,i)=>`<tr>
+            <td style="font-size:20px">${v.e}</td>
+            <td><b>${esc(v.tr)}</b></td>
+            <td>${esc(v.v1)}</td><td>${esc(v.v2)}</td><td>${esc(v.v3)}</td>
+            <td><button class="btn ghost sm" data-spk="${i}">🔊</button></td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+  $$("[data-spk]").forEach(b=> b.onclick = ()=>{
+    const v = VERBS[+b.dataset.spk];
     speak(v.v1 + ", " + v.v2.replace("/", " or ") + ", " + v.v3);
   });
 }
 
-function checkVerbs(){
-  let ok=0, wrong=0, empty=0;
-  V.set.forEach((v,i)=>{
-    let allOk = true;
-    ["v1","v2","v3"].forEach(k=>{
-      const inp = $(`#verbArea input[data-v="${i}"][data-k="${k}"]`);
-      inp.classList.remove("good","bad");
-      const val = norm(inp.value);
-      if(!val){ empty++; allOk=false; inp.value = v[k]; inp.classList.add("bad"); return; }
-      // "was/were" gibi çoklu cevaplar
-      const accept = v[k].toLowerCase().split("/").map(s=>norm(s));
-      if(accept.includes(val) || norm(v[k]) === val){ ok++; inp.classList.add("good"); }
-      else { wrong++; allOk=false; inp.classList.add("bad"); inp.value = v[k]; }
-    });
-    if(allOk) store.verbOk.add(v.v1);
-  });
-  // Her kutu ayrı bir cevap sayılır
-  store.ok += ok;
-  store.no += wrong + empty;
-  save();
-  $("#scOk").textContent = store.ok;
-  $("#scNo").textContent = store.no;
-  V.checked = true;
-  renderVerbProgress();
-  toast(`${ok} doğru · ${wrong+empty} eksik/yanlış`, ok >= wrong+empty ? "good" : "bad");
-}
-function renderVerbProgress(){
-  const total = VERBS.length, learned = store.verbOk.size;
-  $("#verbBar").style.width = (learned/total*100) + "%";
-  $("#verbProg").textContent = learned + " / " + total + " fiil öğrenildi";
-}
-
-$("#verbNew").onclick   = ()=> newVerbSet();
-$("#verbCheck").onclick = ()=> checkVerbs();
+/* Bu iki düğme artık her modun kendi arayüzünde yer alıyor. */
 $$("#verbModeChips .chip").forEach(b=> b.onclick = ()=>{
   $$("#verbModeChips .chip").forEach(x=> x.classList.remove("active"));
   b.classList.add("active");
@@ -1986,7 +1929,7 @@ function renderGram(){
       <div><h2 style="font-size:21px;letter-spacing:-.4px">${esc(g.title)}</h2>
         <div class="muted" style="font-size:13.5px">${esc(g.sub)}</div></div>
     </div>
-    <div style="margin-top:14px;font-size:14.8px">${g.html}</div>
+    <div class="gramBody" style="margin-top:14px;font-size:14.8px">${g.html}</div>
 
     <div class="secTitle" style="margin-top:22px">Örnek Cümleler</div>
     <ul class="exList">
@@ -3321,36 +3264,6 @@ const NEW_CATS = {
 function openSide(){ $("#studioSide").classList.add("open"); $("#sideScrim").classList.add("open"); }
 function closeSide(){ $("#studioSide").classList.remove("open"); $("#sideScrim").classList.remove("open"); }
 
-buildChips = function(){
-  $("#catChips").innerHTML = CAT_GROUPS.map(g=>{
-    const cs = CATEGORIES.filter(c=> c.group === g);
-    if(!cs.length) return "";
-    return `<div class="catGroup"><span class="gLabel">${esc(g)}</span><div class="chips">`
-      + cs.map(c=> `<button class="chip ${c.id===W.cat?"active":""}" data-cat="${c.id}">${c.icon} ${esc(c.name)}<span class="cnt">${c.words.length}</span></button>`).join("")
-      + `</div></div>`;
-  }).join("");
-
-  $("#modeChips").innerHTML = MODES.map(m=>
-    `<button class="chip ${m.id===W.mode?"active":""}" data-mode="${m.id}">${esc(m.name)}</button>`).join("");
-
-  $$("#catChips .chip").forEach(b=> b.onclick = ()=>{
-    W.cat = b.dataset.cat; closeSide(); resetWordMode();
-  });
-  $$("#modeChips .chip").forEach(b=> b.onclick = ()=>{
-    W.mode = b.dataset.mode; resetWordMode();
-  });
-
-  /* Mobil başlık ve tek sütun modu */
-  const cat = CATEGORIES.find(c=> c.id === W.cat);
-  const mode = MODES.find(m=> m.id === W.mode);
-  const lbl = $("#pickerLabel");
-  if(lbl) lbl.textContent = mode && mode.solo
-    ? mode.name
-    : (cat ? cat.icon + " " + cat.name + " · " + (mode ? mode.name : "") : "Kategori seç");
-  const studio = $("#studio");
-  if(studio) studio.classList.toggle("solo", !!(mode && mode.solo));
-};
-
 $("#pickerBtn").onclick = openSide;
 $("#sideClose").onclick = closeSide;
 $("#sideScrim").onclick = closeSide;
@@ -4115,47 +4028,6 @@ function buildSynAnt(n){
   });
 }
 
-function renderSynAnt(area){
-  if(!W.saQ){ W.saQ = buildSynAnt(12); W.queue = W.saQ; W.done = 0; W.right = 0; }
-  if(W.done >= W.saQ.length) return finishRound(area);
-
-  const q = W.saQ[W.done];
-  const isOpp = q.kind === "opp";
-  setWordProgress(W.done, W.saQ.length, W.done + " / " + W.saQ.length);
-
-  area.innerHTML = `
-  <div class="card pad qbox">
-    <div class="center">
-      <span class="badge ${isOpp ? "no" : "ok"}">${isOpp ? "Zıt anlamlısı — Opposite" : "Eş anlamlısı — Synonym"}</span>
-    </div>
-    <div class="saWord">${esc(q.a)}</div>
-    <div class="qTr">${esc(q.aTr)}</div>
-    <p class="center muted" style="font-size:13.5px;margin-top:10px">
-      Bu kelimenin ${isOpp ? "<b>zıt</b>" : "<b>eş</b>"} anlamlısı hangisidir?</p>
-    <div class="opts" id="saOpts">
-      ${q.o.map((o,i)=> `<button class="opt" data-o="${i}"><span class="k">${"ABCD"[i]}</span>${esc(o)}</button>`).join("")}
-    </div>
-    <div class="feedback" id="saFb"></div>
-  </div>`;
-
-  $$("#saOpts .opt").forEach(b=> b.onclick = ()=>{
-    const pick = +b.dataset.o;
-    const ok = pick === q.ans;
-    $$("#saOpts .opt").forEach((x,i)=>{
-      x.disabled = true;
-      if(i === q.ans) x.classList.add("good");
-      else if(i === pick) x.classList.add("bad");
-    });
-    const fb = $("#saFb");
-    fb.className = "feedback show " + (ok ? "good" : "bad");
-    fb.innerHTML = (ok ? "✓ Doğru. " : "✗ Doğrusu: ")
-      + `<b>${esc(q.a)}</b> ${isOpp ? "↔" : "="} <b>${esc(q.b)}</b> &nbsp;<span class="muted">(${esc(q.aTr)} ${isOpp ? "↔" : "="} ${esc(q.bTr)})</span>`;
-    score(ok); if(ok) W.right++;
-    speak(q.a + (isOpp ? ", opposite, " : ", same as, ") + q.b);
-    setTimeout(()=>{ W.done++; renderSynAnt(area); }, ok ? 1150 : 2100);
-  });
-}
-
 /* renderWords'e yeni modu tanıt */
 const _renderWordsBase = renderWords;
 renderWords = function(){
@@ -4562,7 +4434,7 @@ buildChips = function(){
     const cs = CATEGORIES.filter(c=> c.group === g);
     if(!cs.length) return "";
     return `<div class="catGroup" style="--gc:var(--g${(gi % 6) + 1})">
-      <span class="gLabel">${esc(g)}</span><div class="chips">`
+      <span class="gLabel" lang="en">${esc(g)}</span><div class="chips">`
       + cs.map(c=> `<button class="chip ${c.id===W.cat?"active":""}" data-cat="${c.id}" title="${esc(c.tr || c.name)}">`
           + `<span class="ci">${c.icon}</span>${esc(c.name)}<span class="cnt">${c.words.length}</span></button>`).join("")
       + `</div></div>`;
@@ -4835,10 +4707,6 @@ renderVerbs = function(){
   if(V.mode !== "speed"){ clearInterval(V.timer); V.speed = null; }
   if(V.mode !== "quiz") V.quiz = null;
   if(V.mode !== "match") V.match = null;
-
-  const showTest = V.mode === "test";
-  if($("#verbCheck")) $("#verbCheck").style.display = showTest ? "" : "none";
-  if($("#verbNew"))   $("#verbNew").style.display   = showTest ? "" : "none";
 
   if(V.mode === "quiz")  return renderVerbQuiz();
   if(V.mode === "match") return renderVerbMatch();
@@ -5392,6 +5260,162 @@ renderStats = function(){
     toast("Her şey silindi", "bad");
   };
 };
+
+/* ==================================================================
+   23) FİİL YAZMA MODU — her kartta kendi kontrol düğmesi
+   ------------------------------------------------------------------
+   Eskiden 24 kutunun hepsi dolmadan geri bildirim yoktu ve kontrol
+   düğmesi sayfanın tepesindeydi. Artık her fiil tek tek kontrol
+   edilebiliyor, sonuç anında kartın altında görünüyor.
+   ================================================================== */
+
+function verbAccepts(v, k, val){
+  /* Metni burada temizle: cagiran tarafin hatirlamasina birakma.
+     Buyuk/kucuk harf, bastaki-sondaki bosluk ve noktalama onemsiz. */
+  val = norm(val);
+  const accept = String(v[k]).toLowerCase().split("/").map(x=> norm(x));
+  return !!val && (accept.includes(val) || norm(v[k]) === val);
+}
+
+function checkOneVerb(i){
+  const v = V.set[i];
+  if(!v || V.checked[i] !== undefined) return;
+  let ok = 0;
+
+  ["v1","v2","v3"].forEach(k=>{
+    const inp = $(`#verbArea input[data-v="${i}"][data-k="${k}"]`);
+    if(!inp) return;
+    inp.classList.remove("good","bad");
+    if(verbAccepts(v, k, norm(inp.value))){
+      ok++; inp.classList.add("good"); score(true);
+    } else {
+      inp.classList.add("bad");
+      inp.value = v[k];
+      score(false);
+    }
+    inp.readOnly = true;
+  });
+
+  V.checked[i] = ok;
+  if(ok === 3) store.verbOk.add(v.v1);
+  save();
+
+  const foot = $("#vfoot-" + i);
+  if(foot){
+    foot.className = "vResult " + (ok === 3 ? "all" : ok ? "some" : "none");
+    foot.innerHTML = ok === 3
+      ? `<b>✓ Üçü de doğru</b>`
+      : `<b>${ok} / 3 doğru</b> <span>${esc(v.v1)} — ${esc(v.v2)} — ${esc(v.v3)}</span>`;
+  }
+  const btn = $("#vbtn-" + i);
+  if(btn) btn.remove();
+
+  speak(v.v1 + ", " + v.v2.replace("/", " or ") + ", " + v.v3);
+  verbProgress();
+  updateVerbFooter();
+}
+
+function updateVerbFooter(){
+  const done = Object.keys(V.checked).length;
+  const el = $("#vDoneCount");
+  if(el) el.textContent = done + " / " + V.set.length + " fiil kontrol edildi";
+  const all = $("#vCheckAll");
+  if(all) all.disabled = done >= V.set.length;
+}
+
+function renderVerbTest(){
+  const area = $("#verbArea");
+  if(!V.set.length) V.set = sample(VERBS, 8);
+  if(!V.checked) V.checked = {};
+  verbProgress();
+
+  area.innerHTML = `
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:13px">
+    ${V.set.map((v,i)=>{
+      const done = V.checked[i] !== undefined;
+      return `<div class="verbCard">
+        <div class="verbHead">
+          <div class="e">${v.e}</div>
+          <div style="flex:1"><b>${esc(v.tr)}</b><span>üç hâlini yaz</span></div>
+          <button class="btn ghost sm" data-vspk="${i}" title="Doğru cevabı dinle">🔊</button>
+        </div>
+        <div class="vgrid">
+          ${["v1","v2","v3"].map((k,j)=>`
+            <div class="vfield">
+              <label>${k.toUpperCase()} ${["(yalın)","(past)","(participle)"][j]}</label>
+              <input class="inp" data-v="${i}" data-k="${k}" data-idx="${i*3+j}"
+                autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                enterkeyhint="${j === 2 ? "done" : "next"}" ${done ? "readonly" : ""}>
+            </div>`).join("")}
+        </div>
+        ${done ? `<div class="vResult ${V.checked[i]===3?"all":V.checked[i]?"some":"none"}" id="vfoot-${i}">
+            ${V.checked[i]===3 ? "<b>✓ Üçü de doğru</b>"
+              : `<b>${V.checked[i]} / 3 doğru</b> <span>${esc(v.v1)} — ${esc(v.v2)} — ${esc(v.v3)}</span>`}
+          </div>`
+        : `<div class="vResult" id="vfoot-${i}" style="display:none"></div>
+           <button class="btn sm vCheckBtn" id="vbtn-${i}" data-check="${i}">Kontrol et</button>`}
+      </div>`;
+    }).join("")}
+  </div>
+
+  <div class="card pad vBottomBar">
+    <span class="mono muted" id="vDoneCount">0 / ${V.set.length} fiil kontrol edildi</span>
+    <div class="row">
+      <button class="btn ghost" id="vCheckAll">Kalanları kontrol et</button>
+      <button class="btn" id="vNewSet">Yeni set</button>
+    </div>
+  </div>
+
+  <p class="center muted" style="margin-top:14px;font-size:13px">
+    Bilmediğin kutuyu boş bırakabilirsin. Bilgisayarda <b>Enter</b> ile sıradaki kutuya geçersin;
+    son kutuda Enter o fiili kontrol eder.</p>`;
+
+  /* Kutular arası geçiş */
+  const inputs = $$("#verbArea input");
+  inputs.forEach(inp=> inp.onkeydown = e=>{
+    if(e.key !== "Enter") return;
+    e.preventDefault();
+    const idx = +inp.dataset.idx;
+    const card = +inp.dataset.v;
+    if(idx % 3 === 2){ checkOneVerb(card); inp.blur(); return; }
+    const nx = inputs[idx + 1];
+    if(nx && !nx.readOnly){ nx.focus(); nx.select(); }
+  });
+
+  $$("#verbArea [data-check]").forEach(b=> b.onclick = ()=> checkOneVerb(+b.dataset.check));
+  $$("#verbArea [data-vspk]").forEach(b=> b.onclick = ()=>{
+    const v = V.set[+b.dataset.vspk];
+    speak(v.v1 + ", " + v.v2.replace("/", " or ") + ", " + v.v3);
+  });
+  $("#vCheckAll").onclick = ()=>{ V.set.forEach((_,i)=> checkOneVerb(i)); };
+  $("#vNewSet").onclick   = ()=>{ V.set = sample(VERBS, 8); V.checked = {}; renderVerbTest(); };
+
+  updateVerbFooter();
+}
+
+/* Yeni Set / Kontrol Et üst düğmeleri de bu modu kullansın */
+const _renderVerbsTest = renderVerbs;
+renderVerbs = function(){
+  if(V.mode === "test"){
+    clearInterval(V.timer); V.speed = null; V.quiz = null; V.match = null;
+    return renderVerbTest();
+  }
+  _renderVerbsTest();
+};
+function newVerbSet(){ V.set = sample(VERBS, 8); V.checked = {}; renderVerbs(); }
+
+
+/* Başlık iki satırlı ve yüksekliği ekrana göre değişiyor.
+   Yapışkan panellerin altında boşluk kalmaması için gerçek
+   yüksekliği ölçüp CSS'e bildiriyoruz. */
+function syncHeader(){
+  const el = document.querySelector("header");
+  if(el) document.documentElement.style.setProperty("--hdr", el.offsetHeight + "px");
+}
+syncHeader();
+window.addEventListener("resize", syncHeader);
+window.addEventListener("orientationchange", syncHeader);
+setTimeout(syncHeader, 300);
 
 /* ==================================================================
    11) BAŞLAT

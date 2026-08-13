@@ -26,7 +26,9 @@ Gap Fill, Quiz, Listening, Opposites. Her kelimede görsel, örnek cümle ve
 tarayıcının konuşma sentezi ile telaffuz.
 
 **Verbs** — Düzensiz fiillerde 5 mod: V1·V2·V3 yazma, çoktan seçmeli,
-eşleştirme, 60 saniyelik hız turu ve tam liste.
+eşleştirme, 60 saniyelik hız turu ve tam liste. Yazma modunda her fiil kendi
+düğmesiyle tek tek kontrol edilir; `was/were` gibi çift cevaplı fiillerde her
+iki hâl de kabul edilir.
 
 **Grammar** — 19 A1 konusu; kural tabloları, sık yapılan hatalar ve konu testleri.
 
@@ -143,6 +145,27 @@ yüklü olmayabilir.
 
 ## Teknik
 
-Tek dosya, sıfır bağımlılık, derleme adımı yok. Yaklaşık 294 KB.
-Açık ve koyu tema; tema seçilmediğinde cihazın sistem ayarını izler.
-Mobil ve masaüstü için ayrı düzenler.
+Tek dosya, sıfır bağımlılık, derleme adımı yok. Yaklaşık 300 KB
+(HTML %2, CSS %11, JavaScript %87 — bunun da yaklaşık üçte ikisi içerik verisi).
+
+Framework, kütüphane, paket yöneticisi ve sunucu kullanılmaz. Arayüz çalışma
+anında JavaScript ile üretilir (tek sayfa uygulaması). Açık ve koyu tema
+desteklenir; tema seçilmediğinde cihazın sistem ayarı izlenir. Mobil ve
+masaüstü için ayrı düzenler vardır.
+
+Kullanılan tarayıcı özellikleri: `localStorage` (kalıcılık), Web Speech API
+(telaffuz), `Blob` + `FileReader` (yedekleme), `matchMedia` (tema), CSS
+değişkenleri, Grid ve Flexbox.
+
+## Testler
+
+Mantık katmanı, sahte bir tarayıcı ortamında (`node:vm`) çalıştırılarak
+doğrulanır — beş takım hâlinde:
+
+| Takım | Kapsam |
+|---|---|
+| İçerik ve çalışma zamanı | Kodun baştan sona hatasız çalışması, 594 kelimenin alan bütünlüğü, sınav üretecinin 180 kez kurulması |
+| Aralıklı tekrar | Kutu yükselme/sıfırlanma, tarih hesabı, oturum kurulumu, günlük yeni kart sınırı |
+| İşaretleme birleşmesi | Elle işaretleme ile tekrar takviminin tek sistem gibi davranması |
+| Sıfırlama ve yedek güvenliği | 12 veri alanının eksiksiz temizlenmesi, zehirli yedek dosyasına karşı 16 senaryo |
+| Fiil cevap kabulü | Büyük/küçük harf, boşluk, çift cevaplı fiiller, çift puanlama koruması |
